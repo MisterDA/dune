@@ -123,6 +123,12 @@ module Style = struct
     Printf.sprintf "\027[%sm" (String.concat l ~sep:";")
 end
 
+module Codes = struct
+  type t = char
+
+  let erase_from_cursor_to_eol = 'K'
+end
+
 let term_supports_color =
   lazy
     (match Stdlib.Sys.getenv "TERM" with
@@ -205,6 +211,8 @@ let parse_line str styles =
       let seq_start = seq_start + 2 in
       if seq_start >= len || str.[seq_start - 1] <> '[' then
         (styles, acc)
+      else if str.[seq_start] = Codes.erase_from_cursor_to_eol then
+        loop styles (seq_start + 1) acc
       else
         match String.index_from str seq_start 'm' with
         | None -> (styles, acc)
