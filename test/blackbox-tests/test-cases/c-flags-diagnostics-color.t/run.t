@@ -4,8 +4,8 @@ and the :standard set only if and only if
 - the compiler is GCC or Clang;
 - use_standard_c_and_cxx_flags is true.
 
-The compiler is detected using the command name, that may not be most
-portable way.
+In this test, the compiler is detected using the command name, that
+may not be most portable way.
 
   $ O_CC=$(ocamlc -config-var c_compiler)
 
@@ -13,7 +13,7 @@ We also have to trick Dune into believing it's executed in a tty,
 otherwise it won't output colors!
 
   $ function cc_supported() {
-  >   if [[ "${O_CC}" == *gcc || "${O_CC}" = "clang" ]]; then
+  >   if [[ "${O_CC}" == *gcc || "${O_CC}" = *clang ]]; then
   >     echo "1";
   >   else echo "0"; fi }
 
@@ -22,11 +22,11 @@ otherwise it won't output colors!
   >   if [[ "$(cc_supported)" = 1 ]]; then
   >     echo "int isatty(int fd) { return $b; }" |
   >       $(ocamlc -config-var native_c_compiler) -shared -ldl -o isatty-$b.so -xc -;
-  >     env										\
-  >       TERM=not_dumb									\
-  >       "DYLD_INSERT_LIBRARIES=$PWD/isatty-$b.so"					\
-  >       DYLD_FORCE_FLAT_NAMESPACE=y							\
-  >       "LD_PRELOAD=$PWD/isatty-$b.so" 						\
+  >     env						\
+  >       TERM=not_dumb					\
+  >       "DYLD_INSERT_LIBRARIES=$PWD/isatty-$b.so"	\
+  >       DYLD_FORCE_FLAT_NAMESPACE=y			\
+  >       "LD_PRELOAD=$PWD/isatty-$b.so" 		\
   >       "$@";
   >   else
   >     env "$@";
@@ -120,7 +120,7 @@ If not running in a tty, the flag should not be present.
   >  (foreign_stubs (language c) (names stub)))
   > EOF
 
-  $ env_isatty 0 dune rules -m stub.o > out_stub
+  $ env_isatty 0 dune rules -m stub.o | tr -s '\t\n\\' ' ' > out_stub
 
   $ out=$(grep -ce "-fdiagnostics-color=always" out_stub);
   > if [[ "$(cc_supported)" = 1 ]]; then
