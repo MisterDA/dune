@@ -435,8 +435,8 @@ you had setup a rule for every file of the form:
    .. code:: lisp
 
        (rule
-        (target file.pp.ml)
-        (deps   file.ml)
+        (target file.ml)
+        (deps   file.pp.ml)
         (action (with-stdout-to %{target}
                  (chdir %{workspace_root} <action>))))
 
@@ -459,9 +459,9 @@ start with a ``-``, you can separate library names from flags using
 The list of libraries will be ``ppx1`` and ``ppx2`` and the command line
 arguments will be: ``-foo -bar 42``.
 
-Libraries listed here should be libraries implementing an OCaml AST rewriter and
-registering themselves using the `ocaml-migrate-parsetree.driver API
-<https://github.com/let-def/ocaml-migrate-parsetree>`__.
+Libraries listed here should implement an OCaml AST rewriter and
+register themselves using the `ocaml-migrate-parsetree.driver API
+<https://github.com/ocaml-ppx/ocaml-migrate-parsetree>`_.
 
 Dune will build a single executable by linking all these libraries and their
 dependencies. Note that it is important that all these libraries are linked with
@@ -483,7 +483,7 @@ module-by-module basis by using the following syntax:
                  ...))
 
 Where ``<spec1>``, ``<spec2>``, ... are preprocessing specifications
-and ``<module-list1>``, ``<module-list2>``, ... are list of module
+and ``<module-list1>``, ``<module-list2>``, ... are lists of module
 names.
 
 For instance:
@@ -491,8 +491,8 @@ For instance:
  .. code:: lisp
 
     (preprocess (per_module
-                 (((action (run ./pp.sh X=1 %{input-file})) foo bar))
-                 (((action (run ./pp.sh X=2 %{input-file})) baz))))
+                 ((action (run ./pp.sh X=1 %{input-file})) foo bar)
+                 ((action (run ./pp.sh X=2 %{input-file})) baz)))
 
 .. _future-syntax:
 
